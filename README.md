@@ -10,21 +10,19 @@ The backend is built using Firebase Cloud Functions, Firestore, and Firebase Aut
 
 🚀 Tech Stack
 
-Node.js\\
+Node.js
 
-Firebase Cloud Functions\\
+Firebase Cloud Functions
 
-Firebase Authentication\\
+Firebase Authentication
 
-Cloud Firestore\\
+Cloud Firestore
 
-Firebase Emulator Suite\\
+Firebase Emulator Suite
 
-bcrypt (password hashing)\\
+bcrypt (password hashing)
 
-Postman (API testing)\\
-
-
+Postman (API testing)
 
 
 
