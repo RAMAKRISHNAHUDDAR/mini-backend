@@ -1,6 +1,6 @@
 🩺 Samagra NutriCare – Backend
 
-This repository contains the backend services for the Samagra NutriCare application, a healthcare and nutrition management platform that enables doctors and patients to manage appointments, chat, and maintain detailed medical reports.
+This repository contains the backend services for the Samagra NutriCare application, a healthcare and nutrition management platform that enables doctors and patients to manage appointments, chat, and maintain detailed medical reports and diet plans.
 
 
 
