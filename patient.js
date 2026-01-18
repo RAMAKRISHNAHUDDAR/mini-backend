@@ -237,25 +237,22 @@ function formatPhone(phone) {
   return null;
 }
 
-// ======================================================================
-// LOGIN PATIENT (PHONE + PASSWORD) — DEV MODE
-// ======================================================================
+// =======================================================
+// LOGIN PATIENT (PHONE + PASSWORD) — TOKEN ENABLED
+// =======================================================
 exports.loginPatient = onRequest(async (req, res) => {
   try {
     const { phone, password } = req.body;
 
     if (!phone || !password) {
-      return res.status(400).json({
-        error: "Phone and password are required",
-      });
+      return res.status(400).json({ error: "Phone and password required" });
     }
 
     const fullPhone = formatPhone(phone);
     if (!fullPhone) {
-      return res.status(400).json({ error: "Invalid phone number format" });
+      return res.status(400).json({ error: "Invalid phone number" });
     }
 
-    // 1️⃣ Get Firebase Auth user by phone
     const user = await admin
       .auth()
       .getUserByPhoneNumber(fullPhone)
@@ -265,35 +262,34 @@ exports.loginPatient = onRequest(async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // 2️⃣ Get patient record from Firestore
     const snap = await db.collection("patients").doc(user.uid).get();
-
     if (!snap.exists) {
       return res.status(404).json({ error: "Patient record missing" });
     }
 
-    // 3️⃣ Compare password
     const isMatch = await bcrypt.compare(password, snap.data().password);
     if (!isMatch) {
       return res.status(400).json({ error: "Invalid password" });
     }
 
-    // ✅ LOGIN SUCCESS (NO TOKEN)
+    // ✅ CREATE FIREBASE CUSTOM TOKEN
+    const customToken = await admin.auth().createCustomToken(user.uid, {
+      role: "patient",
+    });
+
     return res.json({
       success: true,
       uid: user.uid,
       role: "patient",
-      phone: fullPhone,
+      token: customToken, // 🔥 THIS IS REQUIRED
       message: "Login successful",
     });
+
   } catch (err) {
     console.error("loginPatient error:", err);
     return res.status(500).json({ error: "Login failed" });
   }
 });
-
-
-
 
 
 // ======================================================================

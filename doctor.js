@@ -174,7 +174,7 @@ exports.registerDoctor = async (req, res) => {
 };
 
 // =======================================================
-// 4️⃣ LOGIN DOCTOR (NO TOKEN GENERATION)
+// LOGIN DOCTOR (WITH TOKEN) ✅ REQUIRED
 // =======================================================
 exports.loginDoctor = onRequest(async (req, res) => {
   try {
@@ -189,17 +189,17 @@ exports.loginDoctor = onRequest(async (req, res) => {
       return res.status(400).json({ error: "Invalid phone number" });
     }
 
-    // 1️⃣ Auth user
+    // 1️⃣ Get Firebase Auth user
     const user = await admin
       .auth()
       .getUserByPhoneNumber(fullPhone)
       .catch(() => null);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Doctor not found" });
     }
 
-    // 2️⃣ Firestore doctor doc
+    // 2️⃣ Firestore doctor record
     const snap = await db.collection("doctors").doc(user.uid).get();
     if (!snap.exists) {
       return res.status(404).json({ error: "Doctor record missing" });
@@ -211,17 +211,23 @@ exports.loginDoctor = onRequest(async (req, res) => {
       return res.status(400).json({ error: "Invalid password" });
     }
 
+    // ✅ CREATE FIREBASE CUSTOM TOKEN (CRITICAL)
+    const customToken = await admin.auth().createCustomToken(user.uid);
+
     return res.json({
       success: true,
       uid: user.uid,
       role: "doctor",
+      token: customToken, // 🔑 THIS WAS MISSING
       message: "Login successful",
     });
+
   } catch (err) {
     console.error("loginDoctor error:", err);
-    return res.status(500).json({ error: "Login failed" });
+    return res.status(500).json({ error: err.message });
   }
 });
+
 
 // =======================================================
 // 5️⃣ UPDATE DOCTOR PROFILE (AUTH PROTECTED)

@@ -30,6 +30,8 @@ const doctor = require("./doctor");
 const appointments = require("./appointments");
 const chat = require("./chat");
 const report = require("./report");
+const diet = require("./diet");
+
 
 
 
@@ -93,3 +95,8 @@ exports.createReport = report.createReport;
 exports.getReports = report.getReports;
 exports.updateReport = report.updateReport;
 
+
+// ---------------- DIET FUNCTIONS ----------------
+exports.saveDietPlan = onRequest(diet.saveDietPlan);
+exports.getMyDietPlan = onRequest(diet.getMyDietPlan);
+exports.getPatientDiet = onRequest(diet.getPatientDiet);
